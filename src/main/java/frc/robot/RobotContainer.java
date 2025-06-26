@@ -7,7 +7,9 @@ package frc.robot;
 import frc.robot.commands.AimAtAprilTagCommand;
 import frc.robot.commands.FollowAprilTagCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.TestSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final TestSubsystem m_testSubsystem = new TestSubsystem();
 
   // Creates the Xbox controller to drive the robot
   CommandXboxController mainController = new CommandXboxController(0);  
@@ -34,6 +37,15 @@ public class RobotContainer {
   private void configureBindings() {
     // Put any trigger->command mappings here.
     
+    // Bind motorTest actions to XboxController buttons
+    mainController.x().whileTrue(
+        new InstantCommand(() -> m_testSubsystem.runMotor(0.5), m_testSubsystem) // Run motor at 50% speed
+    );
+
+    mainController.y().onTrue(
+        new InstantCommand(() -> m_testSubsystem.stopMotor(), m_testSubsystem) // Stop the motor
+    );
+
     // Run motor with setSpeeds command
     Command arcadeDrive =
       m_driveSubsystem.run(

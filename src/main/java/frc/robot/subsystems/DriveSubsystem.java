@@ -16,8 +16,6 @@ public class DriveSubsystem extends SubsystemBase {
   WPI_VictorSPX motorFrontLeft = new WPI_VictorSPX(0);
   // WPI_VictorSPX motorBackRight = new WPI_VictorSPX(3);
   // WPI_VictorSPX motorBackLeft = new WPI_VictorSPX(2);
-
-  
   
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -46,7 +44,6 @@ public class DriveSubsystem extends SubsystemBase {
   public void setArcadeSpeed(double forwardSpeed, double turningSpeed) {
     double leftSpeed = forwardSpeed + turningSpeed;
     double rightSpeed = forwardSpeed - turningSpeed;
-
     setSpeeds(leftSpeed, rightSpeed);
   }
 
@@ -59,5 +56,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Log the current motor temperatures
     Logger.recordOutput("MotorFrontLeft_Temperature", motorFrontLeft.getTemperature());
     Logger.recordOutput("MotorFrontRight_Temperature", motorFrontRight.getTemperature());
+    /** The following logs are for motorTest */
   }
 }
