@@ -46,6 +46,10 @@ public class RobotContainer {
         new InstantCommand(() -> m_testSubsystem.stopMotor(), m_testSubsystem) // Stop the motor
     );
 
+    mainController.b().onTrue(
+        new InstantCommand(() -> m_testSubsystem.resetMotor(), m_testSubsystem) // Reset the motor
+    );
+
     // Run motor with setSpeeds command
     Command arcadeDrive =
       m_driveSubsystem.run(

@@ -5,12 +5,17 @@
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import frc.robot.consts; // Importing constants from consts.java
 
 public class TestSubsystem extends SubsystemBase {
     /** Creates new TalonFX motor */
@@ -22,19 +27,28 @@ public class TestSubsystem extends SubsystemBase {
         // Configure the motor
         TalonFXConfiguration motorConfig = new TalonFXConfiguration();
         motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Set motor inversion
+        motorConfig.withSlot0(new Slot0Configs()
+            .withKP(consts.PID.KP) // Set proportional gain
+            .withKD(consts.PID.KD) // Set derivative gain
+            .withKI(consts.PID.KI) // Set integral gain)
+            );
         motorTest.getConfigurator().apply(motorConfig);
 
         motorTest.setNeutralMode(com.ctre.phoenix6.signals.NeutralModeValue.Brake); // Set brake mode
     }
 
     /** Run motor according to joystick input values. */
-    public void runMotor(double speed) {
-        motorTest.setControl(new DutyCycleOut(speed)); // Set motor speed
+    public void runMotor(double position) {
+        motorTest.setControl(new PositionVoltage(position)); // Set motor speed
     }
 
     /** Stop the motor. */
     public void stopMotor() {
         motorTest.setControl(new DutyCycleOut(0)); // Stop the motor
+    }
+
+    public void resetMotor() {
+        runMotor(0);
     }
 
     @Override
