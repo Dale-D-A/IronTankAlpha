@@ -39,7 +39,7 @@ public class RobotContainer {
     
     // Bind motorTest actions to XboxController buttons
     mainController.x().whileTrue(
-        new TestMotorCommand(m_testSubsystem, () -> consts.testTurns)
+        new TestMotorCommand(m_testSubsystem, () -> 12 * consts.testTurns)
     );
 
     mainController.b().onTrue(
