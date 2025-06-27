@@ -67,4 +67,4 @@ Use the following command to deploy the code to the robot:
 - The `Test` branch includes experimental features and is not intended for production use.
 
 ## License
-This project is licensed under the WPILib BSD license. See the WPILib-License.md[WPILIB-License.md] file for details.
+This project is licensed under the WPILib BSD license.
