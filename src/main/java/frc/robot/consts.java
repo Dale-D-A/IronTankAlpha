@@ -6,4 +6,6 @@ public class consts {
         public static final double KI = 0.0; // Integral gain
         public static final double KD = 0.0; // Derivative gain
     }
+
+    public static final double testTurns = 1; // Number of turns to test
 }

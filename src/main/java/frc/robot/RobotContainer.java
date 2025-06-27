@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -40,7 +39,7 @@ public class RobotContainer {
     
     // Bind motorTest actions to XboxController buttons
     mainController.x().whileTrue(
-        new TestMotorCommand(m_testSubsystem, () -> 0.5)
+        new TestMotorCommand(m_testSubsystem, () -> consts.testTurns)
     );
 
     mainController.b().onTrue(
