@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.AimAtAprilTagCommand;
 import frc.robot.commands.FollowAprilTagCommand;
+import frc.robot.commands.TestMotorCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.TestSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,15 +40,11 @@ public class RobotContainer {
     
     // Bind motorTest actions to XboxController buttons
     mainController.x().whileTrue(
-        new InstantCommand(() -> m_testSubsystem.runMotor(0.5), m_testSubsystem) // Run motor at 50% speed
-    );
-
-    mainController.y().onTrue(
-        new InstantCommand(() -> m_testSubsystem.stopMotor(), m_testSubsystem) // Stop the motor
+        new TestMotorCommand(m_testSubsystem, () -> 0.5)
     );
 
     mainController.b().onTrue(
-        new InstantCommand(() -> m_testSubsystem.resetMotor(), m_testSubsystem) // Reset the motor
+        new InstantCommand(m_testSubsystem::resetMotor, m_testSubsystem)
     );
 
     // Run motor with setSpeeds command
@@ -71,15 +68,15 @@ public class RobotContainer {
         }
       );
     
-    Command quickTurn =  
-      m_driveSubsystem.run(
-        () -> {
-          m_driveSubsystem.setSpeeds(
-          0.5,
-          -0.5
-          );
-        }
-      ).withTimeout(1.5);
+    // Command quickTurn =  
+    //   m_driveSubsystem.run(
+    //     () -> {
+    //       m_driveSubsystem.setSpeeds(
+    //       0.5,
+    //       -0.5
+    //       );
+    //     }
+    //   ).withTimeout(1.5);
 
     Command aimAtTag = new AimAtAprilTagCommand(m_driveSubsystem);
     Command followTag = new FollowAprilTagCommand(m_driveSubsystem);

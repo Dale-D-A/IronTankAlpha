@@ -37,8 +37,14 @@ public class TestSubsystem extends SubsystemBase {
         motorTest.setNeutralMode(com.ctre.phoenix6.signals.NeutralModeValue.Brake); // Set brake mode
     }
 
+    /** Dynamically change PID */
+    public void setPID(double kp, double ki, double kd) {
+        var config = new Slot0Configs().withKP(kp).withKI(ki).withKD(kd);
+        motorTest.getConfigurator().apply(config);
+    }    
+
     /** Run motor according to joystick input values. */
-    public void runMotor(double position) {
+    public void setMotor(double position) {
         motorTest.setControl(new PositionVoltage(position)); // Set motor speed
     }
 
@@ -48,7 +54,7 @@ public class TestSubsystem extends SubsystemBase {
     }
 
     public void resetMotor() {
-        runMotor(0);
+        setMotor(0);
     }
 
     @Override
