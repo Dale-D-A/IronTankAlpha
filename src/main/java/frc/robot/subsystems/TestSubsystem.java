@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -34,5 +35,18 @@ public class TestSubsystem extends SubsystemBase {
     /** Stop the motor. */
     public void stopMotor() {
         motorTest.setControl(new DutyCycleOut(0)); // Stop the motor
+    }
+
+    @Override
+    public void periodic() {
+        // Logging
+        Logger.recordOutput("TestMotor/Output", motorTest.get());
+        Logger.recordOutput("TestMotor/Position", motorTest.getPosition().getValueAsDouble());
+        Logger.recordOutput("TestMotor/Velocity", motorTest.getVelocity().getValueAsDouble());
+        Logger.recordOutput("TestMotor/Acceleraation", motorTest.getAcceleration().getValueAsDouble());
+        Logger.recordOutput("TestMotor/Temperature", motorTest.getDeviceTemp().getValueAsDouble());
+        Logger.recordOutput("TestMotor/Current", motorTest.getSupplyCurrent().getValueAsDouble());
+        Logger.recordOutput("TestMotor/Voltage", motorTest.getSupplyVoltage().getValueAsDouble());
+        Logger.recordOutput("TestMotor/TorqueCurrent", motorTest.getTorqueCurrent().getValueAsDouble());
     }
 }
