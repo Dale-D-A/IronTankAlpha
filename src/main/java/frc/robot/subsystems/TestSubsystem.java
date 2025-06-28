@@ -19,7 +19,7 @@ import frc.robot.consts; // Importing constants from consts.java
 
 public class TestSubsystem extends SubsystemBase {
     /** Creates new TalonFX motor */
-    TalonFX motorTest = new TalonFX(2);
+    TalonFX motorTest = new TalonFX(consts.CanID.motorTest);
     TalonFXSimState motorTestSimState = motorTest.getSimState();
 
     /** Creates a new TestSubsystem. */
