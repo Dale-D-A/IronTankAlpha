@@ -19,7 +19,6 @@ public class consts {
     }
 
     public static final class Drive {
-        public static final double maxSpeedMetersPerSecond = 3.0; // Maximum forward speed
-        public static final double maxTurnSpeedMetersPerSecond = 1.0; // Maximum turning speed
+        public static final double maxRPM = 5000; // TODO: Update accordingly
     }
 }

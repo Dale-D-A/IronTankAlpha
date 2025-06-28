@@ -47,12 +47,13 @@ public class RobotContainer {
 
     // Run motor with setVelocity command
     Command arcadeDrive = m_driveSubsystem.run(() -> {
-      double forwardSpeed = deadBand(-mainController.getLeftY(), 0.1) * consts.Drive.maxSpeedMetersPerSecond;
-      double turningSpeed = deadBand(mainController.getRightX(), 0.1) * consts.Drive.maxTurnSpeedMetersPerSecond;
+      double forwardRPM = deadBand(-mainController.getLeftY(), 0.1) * consts.Drive.maxRPM;
+      double turnRPM = deadBand(mainController.getRightX(), 0.1) * consts.Drive.maxRPM;
 
-      m_driveSubsystem.setArcadeSpeed(forwardSpeed, turningSpeed);
+      m_driveSubsystem.setArcadeRPM(forwardRPM, turnRPM);
     });
 
+    @Deprecated
     Command tankDrive =
       m_driveSubsystem.run(
         () -> {
@@ -63,15 +64,16 @@ public class RobotContainer {
         }
       );
     
-    // Command quickTurn =  
-    //   m_driveSubsystem.run(
-    //     () -> {
-    //       m_driveSubsystem.setSpeeds(
-    //       0.5,
-    //       -0.5
-    //       );
-    //     }
-    //   ).withTimeout(1.5);
+    @Deprecated
+    Command quickTurn =  
+      m_driveSubsystem.run(
+        () -> {
+          m_driveSubsystem.setSpeeds(
+          0.5,
+          -0.5
+          );
+        }
+      ).withTimeout(1.5);
 
     Command aimAtTag = new AimAtAprilTagCommand(m_driveSubsystem);
     Command followTag = new FollowAprilTagCommand(m_driveSubsystem);
