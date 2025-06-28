@@ -10,7 +10,6 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -34,17 +33,26 @@ public class RobotContainer {
   private void configureBindings() {
     // Put any trigger->command mappings here.
     
+    // This is DEPRECATED, use setVelocity instead of setSpeeds
     // Run motor with setSpeeds command
-    Command arcadeDrive =
-      m_driveSubsystem.run(
-        () -> {
-          m_driveSubsystem.setArcadeSpeed(
-          deadBand(-mainController.getLeftY(), 0.1),
-          deadBand(mainController.getRightX(), 0.1)
-          );
-        }
-      );
-    
+    // Command arcadeDrive =
+    //   m_driveSubsystem.run(
+    //     () -> {
+    //       m_driveSubsystem.setArcadeSpeed(
+    //       deadBand(-mainController.getLeftY(), 0.1),
+    //       deadBand(mainController.getRightX(), 0.1)
+    //       );
+    //     }
+    //   );
+
+    // Run motor with setVelocity command
+    Command arcadeDrive = m_driveSubsystem.run(() -> {
+      double forwardSpeed = deadBand(-mainController.getLeftY(), 0.1) * consts.Drive.maxSpeedMetersPerSecond;
+      double turningSpeed = deadBand(mainController.getRightX(), 0.1) * consts.Drive.maxTurnSpeedMetersPerSecond;
+
+      m_driveSubsystem.setArcadeSpeed(forwardSpeed, turningSpeed);
+    });
+
     Command tankDrive =
       m_driveSubsystem.run(
         () -> {
@@ -55,15 +63,15 @@ public class RobotContainer {
         }
       );
     
-    Command quickTurn =  
-      m_driveSubsystem.run(
-        () -> {
-          m_driveSubsystem.setSpeeds(
-          0.5,
-          -0.5
-          );
-        }
-      ).withTimeout(1.5);
+    // Command quickTurn =  
+    //   m_driveSubsystem.run(
+    //     () -> {
+    //       m_driveSubsystem.setSpeeds(
+    //       0.5,
+    //       -0.5
+    //       );
+    //     }
+    //   ).withTimeout(1.5);
 
     Command aimAtTag = new AimAtAprilTagCommand(m_driveSubsystem);
     Command followTag = new FollowAprilTagCommand(m_driveSubsystem);
