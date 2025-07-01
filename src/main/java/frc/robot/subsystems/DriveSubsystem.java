@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
   private final TalonFX motorFrontRight = new TalonFX(consts.CANID.RCanIDci);
   private final TalonFX motorFrontLeft = new TalonFX(consts.CANID.LCanIDci);
-  private final PIDController pid = new PIDController(0, 0, 0);
+  private final PIDController pid = new PIDController(consts.PosPID.posKPcd, consts.PosPID.posKIcd, consts.PosPID.posKDcd);
 
   private final VelocityDutyCycle velocityRequest = new VelocityDutyCycle(0);
   // private final PositionDutyCycle positionRequest = new PositionDutyCycle(0);
@@ -32,13 +32,6 @@ public class DriveSubsystem extends SubsystemBase {
   private DriveMode currentMode = null;
 
   public DriveSubsystem() {
-    configureForVelocity(); // Default
-  }
-
-  /** Apply velocity PID settings if not already applied */
-  private void configureForVelocity() {
-    if (currentMode == DriveMode.VELOCITY) return;
-
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -51,40 +44,18 @@ public class DriveSubsystem extends SubsystemBase {
 
     motorFrontLeft.getConfigurator().apply(config);
     motorFrontRight.getConfigurator().apply(config);
-
-    currentMode = DriveMode.VELOCITY;
-  }
-
-  /** Apply position PID settings if not already applied */
-  private void configureForPosition() {
-    if (currentMode == DriveMode.POSITION) return;
-
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    Slot0Configs slot0 = config.Slot0;
-    slot0.kP = consts.PosPID.posKPcd;
-    slot0.kI = consts.PosPID.posKIcd;
-    slot0.kD = consts.PosPID.posKDcd;
-
-    motorFrontLeft.getConfigurator().apply(config);
-    motorFrontRight.getConfigurator().apply(config);
-
-    currentMode = DriveMode.POSITION;
   }
 
   /** Velocity PID control (RPM) */
   public void setVelocity(double leftRPM, double rightRPM) {
-    configureForVelocity();
     motorFrontLeft.setControl(velocityRequest.withVelocity(leftRPM));
     motorFrontRight.setControl(velocityRequest.withVelocity(-rightRPM));
+
+    currentMode = DriveMode.VELOCITY; // Update current mode
   }
 
   /** Position PID control (rotations) */
   public void setPosition(double leftRotations, double rightRotations) {
-    configureForPosition();
-
     // Get current positions
     double currentLeftRot = motorFrontLeft.getPosition().getValueAsDouble();
     double currentRightRot = motorFrontRight.getPosition().getValueAsDouble();
@@ -96,6 +67,8 @@ public class DriveSubsystem extends SubsystemBase {
     // Apply calculated velocities
     motorFrontLeft.setControl(velocityRequest.withVelocity(leftVelocity));
     motorFrontRight.setControl(velocityRequest.withVelocity(rightVelocity));
+
+    currentMode = DriveMode.POSITION; // Update current mode
   }
 
   @Override
