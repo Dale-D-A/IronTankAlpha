@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
+import frc.robot.consts;
 import frc.robot.subsystems.DriveSubsystem;
 
 import static frc.robot.consts.*;
@@ -53,8 +54,8 @@ public class FollowAprilTagCommand extends Command {
         }
 
         // Convert outputs (assumed range roughly -1 to 1) to RPM
-        double forwardRPM = forwardOutput * MAX_DRIVE_RPM;
-        double turnRPM = turningOutput * MAX_DRIVE_RPM;
+        double forwardRPM = forwardOutput * consts.Maximums.maxDriveRPMcd;
+        double turnRPM = turningOutput * consts.Maximums.maxDriveRPMcd;
 
         // Calculate left and right RPMs for arcade drive
         double leftRPM = forwardRPM + turnRPM;

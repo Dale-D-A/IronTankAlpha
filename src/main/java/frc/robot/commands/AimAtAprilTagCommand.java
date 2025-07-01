@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.DriveSubsystem;
 
-import static frc.robot.consts.*;
+import frc.robot.consts;
 
 public class AimAtAprilTagCommand extends Command {
     private final DriveSubsystem m_driveSubsystem;
@@ -39,7 +39,7 @@ public class AimAtAprilTagCommand extends Command {
         double turningOutput = m_pidController.calculate(tx); // -1.0 to +1.0 output
 
         // Convert to turning RPM (symmetric, in-place turn)
-        double turnRPM = turningOutput * MAX_DRIVE_RPM;
+        double turnRPM = turningOutput * consts.Maximums.maxDriveRPMcd;
 
         double leftRPM = turnRPM;
         double rightRPM = -turnRPM;

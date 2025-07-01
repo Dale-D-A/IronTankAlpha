@@ -32,9 +32,18 @@ public class DriveSubsystem extends SubsystemBase {
   private DriveMode currentMode = null;
 
   public DriveSubsystem() {
+    motorFrontLeft.getConfigurator().apply(genConfig(true));
+    motorFrontRight.getConfigurator().apply(genConfig(false));
+  }
+
+  public TalonFXConfiguration genConfig(boolean inverted) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    if (inverted) {
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    } else {
+      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    }
 
     Slot0Configs slot0 = config.Slot0;
     slot0.kP = consts.VelPID.velKPcd;
@@ -42,14 +51,13 @@ public class DriveSubsystem extends SubsystemBase {
     slot0.kD = consts.VelPID.velKDcd;
     slot0.kV = consts.VelPID.velKVcd;
 
-    motorFrontLeft.getConfigurator().apply(config);
-    motorFrontRight.getConfigurator().apply(config);
+    return config;
   }
 
   /** Velocity PID control (RPM) */
   public void setVelocity(double leftRPM, double rightRPM) {
     motorFrontLeft.setControl(velocityRequest.withVelocity(leftRPM));
-    motorFrontRight.setControl(velocityRequest.withVelocity(-rightRPM));
+    motorFrontRight.setControl(velocityRequest.withVelocity(rightRPM));
 
     currentMode = DriveMode.VELOCITY; // Update current mode
   }
