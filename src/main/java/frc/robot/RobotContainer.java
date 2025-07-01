@@ -1,93 +1,53 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
-import frc.robot.commands.AimAtAprilTagCommand;
-import frc.robot.commands.FollowAprilTagCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 
-  // Creates the Xbox controller to drive the robot
-  CommandXboxController mainController = new CommandXboxController(0);  
+  // Single Xbox controller for driving
+  CommandXboxController mainController = new CommandXboxController(0);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
     configureBindings();
   }
 
-  /** Use this method to define your trigger->command mappings. */
   private void configureBindings() {
-    // Put any trigger->command mappings here.
-    
-    // Run motor with setSpeeds command
-    Command arcadeDrive =
-      m_driveSubsystem.run(
-        () -> {
-          m_driveSubsystem.setArcadeSpeed(
-          deadBand(-mainController.getLeftY(), 0.1),
-          deadBand(mainController.getRightX(), 0.1)
-          );
-        }
-      );
-    
-    Command tankDrive =
-      m_driveSubsystem.run(
-        () -> {
-          m_driveSubsystem.setSpeeds(
-          deadBand(-mainController.getLeftY(), 0.1),
-          deadBand(-mainController.getRightY(), 0.1)
-          );
-        }
-      );
-    
-    Command quickTurn =  
-      m_driveSubsystem.run(
-        () -> {
-          m_driveSubsystem.setSpeeds(
-          0.5,
-          -0.5
-          );
-        }
-      ).withTimeout(1.5);
+    // Default drive command: single joystick arcade drive using velocity control
+    Command velocityArcadeDrive =
+      m_driveSubsystem.run(() -> {
+        double forwardInput = deadBand(-mainController.getLeftY(), 0.1);
+        double turnInput = deadBand(mainController.getLeftX(), 0.1);
 
-    Command aimAtTag = new AimAtAprilTagCommand(m_driveSubsystem);
-    Command followTag = new FollowAprilTagCommand(m_driveSubsystem);
-    
-    mainController.leftBumper().whileTrue(aimAtTag);
-    mainController.rightBumper().whileTrue(followTag);
+        // Convert joystick input [-1..1] to RPM [-MAX_DRIVE_RPM..MAX_DRIVE_RPM]
+        double forwardRPM = forwardInput * consts.Maximums.maxDriveRPMcd;
+        double turnRPM = turnInput * consts.Maximums.maxDriveRPMcd;
 
-    m_driveSubsystem.setDefaultCommand(arcadeDrive);
-    
-    mainController.a().toggleOnTrue(tankDrive);
+        // Calculate left and right RPM for arcade drive
+        double leftRPM = forwardRPM + turnRPM;
+        double rightRPM = forwardRPM - turnRPM;
 
+        m_driveSubsystem.setVelocity(leftRPM, rightRPM);
+      });
+
+    m_driveSubsystem.setDefaultCommand(velocityArcadeDrive);
+
+    // Optionally bind other commands here, e.g.:
+    // mainController.a().toggleOnTrue(new SomeOtherCommand(m_driveSubsystem));
   }
 
-  // Deadband command to eliminate drifting
+  // Deadband helper to avoid drift
   public static double deadBand(double value, double tolerance) {
-    if(value < tolerance && value > -tolerance) {
+    if (value < tolerance && value > -tolerance) {
       return 0;
-    } else {
-      return value;
     }
+    return value;
   }
-  
+
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
+    // Placeholder for autonomous command
     return new Command() {};
   }
 }
