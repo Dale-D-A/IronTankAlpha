@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.consts;
+import frc.robot.utils.TunableNumber;
 
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -24,6 +25,11 @@ public class DriveSubsystem extends SubsystemBase {
   private final VelocityDutyCycle velocityRequest = new VelocityDutyCycle(0);
   // private final PositionDutyCycle positionRequest = new PositionDutyCycle(0);
 
+  // Tunable numbers for PID constants
+  private final TunableNumber kP = new TunableNumber("DriveSubsystem/kP", consts.VelPID.velKPcd);
+  private final TunableNumber kI = new TunableNumber("DriveSubsystem/kI", consts.VelPID.velKIcd);
+  private final TunableNumber kD = new TunableNumber("DriveSubsystem/kD", consts.VelPID.velKDcd);
+
   /** Enum to track which PID mode is active */
   private enum DriveMode {
     VELOCITY, POSITION
@@ -46,9 +52,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     Slot0Configs slot0 = config.Slot0;
-    slot0.kP = consts.VelPID.velKPcd;
-    slot0.kI = consts.VelPID.velKIcd;
-    slot0.kD = consts.VelPID.velKDcd;
+    // Retrieve PID values from TunableNumber instances
+    slot0.kP = kP.get();
+    slot0.kI = kI.get();
+    slot0.kD = kD.get();
     slot0.kV = consts.VelPID.velKVcd;
 
     return config;
@@ -83,6 +90,10 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Log current control mode
     Logger.recordOutput("Drive/Mode", currentMode == null ? "NONE" : currentMode.name());
+
+    // Update motor configurations periodically to reflect changes in PID values
+    motorFrontLeft.getConfigurator().apply(genConfig(true));
+    motorFrontRight.getConfigurator().apply(genConfig(false));
 
     // LEFT motor logs
     Logger.recordOutput("Drive/Left/Temp", motorFrontLeft.getDeviceTemp().getValue());

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import frc.robot.utils.TunableNumber;
+
 /* const naming standards
  * nameName + c (const) + type
  */
@@ -9,11 +11,13 @@ public final class consts {
   public static final class CANID {
     public static final int LCanIDci = 0;
     public static final int RCanIDci = 1;
+    public static final int armCanIDci = 2;
   }
+  public static final boolean TUNING = true;
 
   // Velocity PID
   public static final class VelPID {
-    public static final double velKPcd = 0.01;
+    public static final TunableNumber DRIVE_VELOCITY_KP = new TunableNumber("00",0);
     public static final double velKIcd = 0.0;
     public static final double velKDcd = 0.0;
     public static final double velKVcd = 0.12;
