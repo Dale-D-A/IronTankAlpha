@@ -5,19 +5,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.DriveSubsystem;
 
+import frc.robot.consts;
+
 public class AimAtAprilTagCommand extends Command {
-    private DriveSubsystem m_driveDriveSubsystem;
-    private PIDController m_pidController;
-    final String limelightName = "limelight";
+    private final DriveSubsystem m_driveSubsystem;
+    private final PIDController m_pidController;
+    private static final String LIMELIGHT_NAME = "limelight";
 
     public AimAtAprilTagCommand(DriveSubsystem driveSubsystem) {
-        m_driveDriveSubsystem = driveSubsystem;
+        this.m_driveSubsystem = driveSubsystem;
 
-        m_pidController = new PIDController(0.01, 0, 0);
-
-        m_pidController.setTolerance(3);
-
-        m_pidController.setSetpoint(0);
+        m_pidController = new PIDController(0.01, 0.0, 0.0); // You may tune these
+        m_pidController.setTolerance(3); // Degrees
+        m_pidController.setSetpoint(0);  // Target is centered
 
         addRequirements(driveSubsystem);
     }
@@ -27,23 +27,35 @@ public class AimAtAprilTagCommand extends Command {
         m_pidController.reset();
     }
 
-    //runs periodically every .02 seconds   
     @Override
     public void execute() {
-        //If we dont see a target, we dont want to do anything
-        if (LimelightHelpers.getFiducialID(limelightName) == -1) {
-            m_driveDriveSubsystem.setSpeeds(0, 0);
-        } else {
-            double turningSpeed = m_pidController.calculate(LimelightHelpers.getTX(limelightName));
-
-            m_driveDriveSubsystem.setArcadeSpeed(0, turningSpeed);
+        // If we don't see a target, stop
+        if (LimelightHelpers.getFiducialID(LIMELIGHT_NAME) == -1) {
+            m_driveSubsystem.setVelocity(0, 0);
+            return;
         }
 
-        //If we do see a target, we want to used the pidcontroller
+        double tx = LimelightHelpers.getTX(LIMELIGHT_NAME); // Horizontal offset in degrees
+        double turningOutput = m_pidController.calculate(tx); // -1.0 to +1.0 output
+
+        // Convert to turning RPM (symmetric, in-place turn)
+        double turnRPM = turningOutput * consts.Maximums.maxDriveRPMcd;
+
+        double leftRPM = turnRPM;
+        double rightRPM = -turnRPM;
+
+        m_driveSubsystem.setVelocity(leftRPM, rightRPM);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_driveDriveSubsystem.setArcadeSpeed(0, 0);
+        m_driveSubsystem.setVelocity(0, 0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        // You can uncomment if you want auto-stop when aimed
+        // return m_pidController.atSetpoint();
+        return false;
     }
 }
