@@ -63,13 +63,6 @@ public class DriveSubsystem extends SubsystemBase {
       config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     }
 
-    Slot0Configs slot0 = config.Slot0;
-    // Retrieve PID values from TunableNumber instances
-    slot0.kP = kP.get();
-    slot0.kI = kI.get();
-    slot0.kD = kD.get();
-    slot0.kV = consts.VelPID.DRIVE_VELOCITY_KV.get();
-
     return config;
   }
 
