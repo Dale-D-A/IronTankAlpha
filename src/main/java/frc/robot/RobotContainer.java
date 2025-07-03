@@ -5,6 +5,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import static frc.robot.consts.ARM_TARGET_ANGLE;
 
 public class RobotContainer {
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
@@ -21,7 +22,7 @@ public class RobotContainer {
     // Default drive command: single joystick arcade drive using velocity control
     Command velocityArcadeDrive =
       m_driveSubsystem.run(() -> {
-        double forwardInput = deadBand(-mainController.getLeftY(), 0.1);
+        double forwardInput = deadBand(mainController.getLeftY(), 0.1);
         double turnInput = deadBand(mainController.getLeftX(), 0.1);
 
         // Convert joystick input [-1..1] to RPM [-MAX_DRIVE_RPM..MAX_DRIVE_RPM]
@@ -37,15 +38,14 @@ public class RobotContainer {
 
     m_driveSubsystem.setDefaultCommand(velocityArcadeDrive);
 
-    // Bind the "A" button to reset the arm position
-    mainController.a().onTrue(new InstantCommand(() -> m_armSubsystem.resetArmPosition()));
+    // Bind the "A" button to set the current position as zero (reset encoder)
+    mainController.a().onTrue(new InstantCommand(() -> m_armSubsystem.resetArmPositionToZero()));
 
-    // Bind the "X" button to set the arm position to a desired angle (e.g., 45 degrees),
-    // then move the arm back to the previously set armAngle
-    mainController.x().onTrue(new InstantCommand(() -> {
-        m_armSubsystem.setArmPosition(45.0); // Move to the desired angle
-        m_armSubsystem.resetArmPositionToZero(); // Reset the motor position to 0
-    }));
+    // Bind the "X" button to move the arm to the target position (tunable)
+    mainController.x().onTrue(new InstantCommand(() -> m_armSubsystem.setArmPosition(ARM_TARGET_ANGLE.get())));
+
+    // Bind the "B" button to move the arm back to zero
+    mainController.b().onTrue(new InstantCommand(() -> m_armSubsystem.setArmPosition(0)));
   }
 
   // Deadband helper to avoid drift

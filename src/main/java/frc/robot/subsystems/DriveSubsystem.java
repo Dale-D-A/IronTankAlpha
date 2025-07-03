@@ -20,15 +20,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
   private final TalonFX motorFrontRight = new TalonFX(consts.CANID.RCanIDci);
   private final TalonFX motorFrontLeft = new TalonFX(consts.CANID.LCanIDci);
-  private final PIDController pid = new PIDController(consts.PosPID.posKPcd, consts.PosPID.posKIcd, consts.PosPID.posKDcd);
+  private final PIDController pid = new PIDController(consts.VelPID.DRIVE_VELOCITY_KP.get(), consts.VelPID.DRIVE_VELOCITY_KI.get(), consts.VelPID.DRIVE_VELOCITY_KD.get());
 
   private final VelocityDutyCycle velocityRequest = new VelocityDutyCycle(0);
   // private final PositionDutyCycle positionRequest = new PositionDutyCycle(0);
 
   // Tunable numbers for PID constants
-  private final TunableNumber kP = new TunableNumber("DriveSubsystem/kP", consts.VelPID.velKPcd);
-  private final TunableNumber kI = new TunableNumber("DriveSubsystem/kI", consts.VelPID.velKIcd);
-  private final TunableNumber kD = new TunableNumber("DriveSubsystem/kD", consts.VelPID.velKDcd);
+  private final TunableNumber kP = new TunableNumber("DriveSubsystem/kP", consts.VelPID.DRIVE_VELOCITY_KP.get());
+  private final TunableNumber kI = new TunableNumber("DriveSubsystem/kI", consts.VelPID.DRIVE_VELOCITY_KI.get());
+  private final TunableNumber kD = new TunableNumber("DriveSubsystem/kD", consts.VelPID.DRIVE_VELOCITY_KD.get());
 
   /** Enum to track which PID mode is active */
   private enum DriveMode {
@@ -38,14 +38,26 @@ public class DriveSubsystem extends SubsystemBase {
   private DriveMode currentMode = null;
 
   public DriveSubsystem() {
+    applyMotorConfigs(); // Apply configurations during initialization
+  }
+
+  /**
+   * Helper method to apply configurations to motors.
+   */
+  private void applyMotorConfigs() {
     motorFrontLeft.getConfigurator().apply(genConfig(true));
     motorFrontRight.getConfigurator().apply(genConfig(false));
   }
 
-  public TalonFXConfiguration genConfig(boolean inverted) {
+  /**
+   * Generates a configuration for the motors.
+   * @param isLeftMotor Whether the configuration is for the left motor.
+   * @return The generated configuration.
+   */
+  private TalonFXConfiguration genConfig(boolean isLeftMotor) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    if (inverted) {
+    if (isLeftMotor) {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     } else {
       config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -56,7 +68,7 @@ public class DriveSubsystem extends SubsystemBase {
     slot0.kP = kP.get();
     slot0.kI = kI.get();
     slot0.kD = kD.get();
-    slot0.kV = consts.VelPID.velKVcd;
+    slot0.kV = consts.VelPID.DRIVE_VELOCITY_KV.get();
 
     return config;
   }
@@ -91,9 +103,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Log current control mode
     Logger.recordOutput("Drive/Mode", currentMode == null ? "NONE" : currentMode.name());
 
-    // Update motor configurations periodically to reflect changes in PID values
-    motorFrontLeft.getConfigurator().apply(genConfig(true));
-    motorFrontRight.getConfigurator().apply(genConfig(false));
+
 
     // LEFT motor logs
     Logger.recordOutput("Drive/Left/Temp", motorFrontLeft.getDeviceTemp().getValue());

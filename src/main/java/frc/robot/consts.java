@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.utils.TunableNumber;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /* const naming standards
  * nameName + c (const) + type
@@ -17,25 +18,17 @@ public final class consts {
 
   // Velocity PID
   public static final class VelPID {
-    public static final TunableNumber DRIVE_VELOCITY_KP = new TunableNumber("00",0);
-    public static final double velKIcd = 0.0;
-    public static final double velKDcd = 0.0;
-    public static final double velKVcd = 0.12;
-  }
-
-  // Position PID
-  public static final class PosPID {
-    public static final double posKPcd = 1.5;
-    public static final double posKIcd = 0.0;
-    public static final double posKDcd = 0.05;
+    public static final TunableNumber DRIVE_VELOCITY_KP = new TunableNumber("Drive Velocity kP", 0.0);
+    public static final TunableNumber DRIVE_VELOCITY_KI = new TunableNumber("Drive Velocity kI", 0.0);
+    public static final TunableNumber DRIVE_VELOCITY_KD = new TunableNumber("Drive Velocity kD", 0.0);
+    public static final TunableNumber DRIVE_VELOCITY_KV = new TunableNumber("Drive Velocity kV", 0.12);
   }
 
   // Max values
   public static final class Maximums {
-    // TODO: This is an example. Value is untested
-    // This value controls the maximum of which the drive motors can run in
-    // Real drive RPM = proportion * maxDriveRPMcd, proportion in [0, 1]
-    public static final double maxDriveRPMcd = 1000.0;
+    public static final double maxDriveRPMcd = 5000.0; // Example value
   }
-  
+
+  // Arm target angle
+  public static final TunableNumber ARM_TARGET_ANGLE = new TunableNumber("Arm Target Angle", 30.0);
 }
