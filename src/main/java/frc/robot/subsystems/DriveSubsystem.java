@@ -26,9 +26,9 @@ public class DriveSubsystem extends SubsystemBase {
   // private final PositionDutyCycle positionRequest = new PositionDutyCycle(0);
 
   // Tunable numbers for PID constants
-  private final TunableNumber kP = new TunableNumber("DriveSubsystem/kP", consts.VelPID.DRIVE_VELOCITY_KP.get());
-  private final TunableNumber kI = new TunableNumber("DriveSubsystem/kI", consts.VelPID.DRIVE_VELOCITY_KI.get());
-  private final TunableNumber kD = new TunableNumber("DriveSubsystem/kD", consts.VelPID.DRIVE_VELOCITY_KD.get());
+  private final TunableNumber kP = new TunableNumber("DriveSubsystem/kP", 0.1);
+  private final TunableNumber kI = new TunableNumber("DriveSubsystem/kI", 0.0);
+  private final TunableNumber kD = new TunableNumber("DriveSubsystem/kD", 0.0);
 
   /** Enum to track which PID mode is active */
   private enum DriveMode {
