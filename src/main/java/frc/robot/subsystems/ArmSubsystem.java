@@ -1,9 +1,11 @@
 package frc.robot.subsystems;
 import frc.robot.consts;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
+import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -11,10 +13,11 @@ import org.littletonrobotics.junction.Logger;
 public class ArmSubsystem extends SubsystemBase {
     private final TalonFX motorArm = new TalonFX(consts.CANID.armCanIDci);
     public double armAngle; // Current angle of the arm in degrees
-
+    private double targetPosition = 0;
     public ArmSubsystem() {
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.withSlot0(new Slot0Configs().withKP(1).withKI(0).withKD(0));
         motorArm.getConfigurator().apply(config);
     }
 
@@ -31,15 +34,14 @@ public class ArmSubsystem extends SubsystemBase {
      * @param targetAngle The desired angle in degrees.
      */
     public void setArmPosition(double targetAngle) {
-        // Convert the target angle to motor position units (if necessary)
-        double targetPosition = targetAngle; // Assuming 1 degree = 1 unit
-        motorArm.setPosition(targetPosition);
-        Logger.recordOutput("Arm/TargetAngle", targetAngle);
+        targetPosition = targetAngle;
+        motorArm.setControl(new VoltageOut(1));
     }
 
     @Override
     public void periodic() {
         // Log the current arm position every cycle
         Logger.recordOutput("Arm/Position", motorArm.getPosition().getValue());
+        Logger.recordOutput("Arm/TargetAngle", targetPosition);
     }
 }

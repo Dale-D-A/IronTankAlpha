@@ -42,7 +42,7 @@ public class RobotContainer {
     mainController.a().onTrue(new InstantCommand(() -> m_armSubsystem.resetArmPositionToZero()));
 
     // Bind the "X" button to move the arm to the target position (tunable)
-    mainController.x().onTrue(new InstantCommand(() -> m_armSubsystem.setArmPosition(ARM_TARGET_ANGLE.get())));
+    mainController.x().onTrue(new InstantCommand(() -> m_armSubsystem.setArmPosition(30)));
 
     // Bind the "B" button to move the arm back to zero
     mainController.b().onTrue(new InstantCommand(() -> m_armSubsystem.setArmPosition(0)));
